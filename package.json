@@ -1,0 +1,16 @@
+{
+  "name": "dcoleman-e2e",
+  "version": "1.0.0",
+  "description": "End-to-end tests of Django Coleman applications using Playwright",
+  "main": "e2e.js",
+  "scripts": {
+    "test": "node e2e.js"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.12.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
