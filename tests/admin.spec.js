@@ -1,43 +1,19 @@
 const { test, describe, expect } = require('@playwright/test');
+const {
+  OPEN_STATES,
+  createTask,
+  login,
+} = require('./init');
 
-const OPEN_STATES = ['To Do', 'In Progress', 'Blocked'];
 
-async function login(page) {
-  // Open login page
-  await page.goto('http://localhost:8000/admin/login/');
-
-  // Login
-  await page.fill('input[name="username"]', 'admin');
-  await page.fill('input[name="password"]', 'admin1234');
-  await page.click('input[type="submit"]');
-
-  // Wait for Admin dashboard
-  await page.waitForURL("**/admin/");
-  await expect(page).toHaveTitle(/Task Manager/);
-}
-
-describe('login', () => {
+describe('admin login', () => {
   test('login to dashboard', async ({ page }) => {
     await login(page);
   });
 });
 
-describe('tasks', () => {
 
-  async function createTask(page, taskTitle, taskState) {
-    // Navigate to Tasks page
-    await page.click('a[href="/admin/mtasks/task/"]');
-
-    // Click to create a task
-    await page.click('a[href="/admin/mtasks/task/add/"]');
-
-    // Fill form with random data
-    await page.fill('input[name="title"]', taskTitle);
-    await page.selectOption('select[name="state"]', { label: taskState });
-
-    // Submit form
-    await page.click('//input[@type="submit" and @value="Save"]');
-  }
+describe('admin tasks', () => {
 
   test('create task', async ({ page }) => {
     await login(page);

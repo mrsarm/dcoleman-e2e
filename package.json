@@ -2,15 +2,19 @@
   "name": "dcoleman-e2e",
   "version": "1.0.0",
   "description": "End-to-end tests of Django Coleman applications using Playwright",
-  "main": "e2e.js",
   "scripts": {
-    "test": "node e2e.js"
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:ci": "npx playwright test --reporter list"
   },
   "dependencies": {
     "@playwright/test": "^1.42.1",
     "@types/node": "^20.12.2"
   },
+  "engines": {
+    "node": ">= 18"
+  },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Mariano Ruiz",
+  "license": "AGPLv3"
 }

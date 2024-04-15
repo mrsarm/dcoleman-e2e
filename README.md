@@ -11,15 +11,15 @@ Inside that directory, you can run several commands:
 
 Runs the end-to-end tests:
 
-    npx playwright test
+    npm test
 
 Starts the interactive UI mode:
 
-    npx playwright test --ui
+    npm run test:ui
 
 Runs the tests in a specific file:
 
-    npx playwright test e2e
+    npx playwright test viewer
 
 Runs the tests in debug mode:
 
