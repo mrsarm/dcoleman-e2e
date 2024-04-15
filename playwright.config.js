@@ -28,6 +28,12 @@ module.exports = defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    launchOptions: process.env.CI !== 'true' ? {} : {
+      // If you don't define the environment variable $CHROMIUM_BIN with the path to a
+      // Chromium executable, Playwright will attempt to find a browser at ~/.cache/ms-playwright/,
+      // that is the folder where `npx playwright install` places different browsers for testing.
+      executablePath: process.env.CHROMIUM_BIN,
+    },
   },
 
   /* Configure projects for major browsers */
