@@ -19,5 +19,7 @@ GIT_HASH_SHORT=$(git rev-parse --short "$GIT_HASH")
 export BUILD=${GIT_BRANCH}.${GIT_HASH_SHORT}
 
 echo "Building mrsarm/dcoleman-e2e:${TAG} with image_build $BUILD ..."
+
+set -x
 #docker-compose build
-docker build --build-arg=BUILD="$BUILD" -t mrsarm/django-coleman:${TAG} .
+docker build --build-arg=BUILD="$BUILD" -t mrsarm/dcoleman-e2e:${TAG} .

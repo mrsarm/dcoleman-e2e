@@ -39,7 +39,7 @@ describe('viewer', () => {
     await expect(page).toHaveTitle(`Django Coleman - Task Viewer | Task #${taskNum}`);
     await expect(page.locator('form h2')).toHaveText(`Order Number: #${taskNum}`);
     await expect(page.locator(`//form//input[@value="${randomTitle}"]`)).toBeDefined();
-    await expect(page.locator('//nav/ol/li/strong')).toHaveText(randomState);
+    await expect(page.locator('//nav/ol/li[@class="breadcrumb-item active"]/strong')).toHaveText(randomState);
   });
 
   test('open not found task in viewer', async ({ page }) => {
