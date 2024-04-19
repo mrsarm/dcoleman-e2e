@@ -22,11 +22,12 @@ jobs:
       run: ./docker-build.sh "${GITHUB_REF_SLUG}"
     - name: Setup environment variables
       run: cp .env.example .env
-    - name: Install pose
+    - name: Download pose
       run: wget https://github.com/mrsarm/pose/releases/download/0.4.0-b4/pose-0.4.0-b4-x86_64-unknown-linux-gnu.tar.gz
-    - run: tar -xvf pose*.tar.gz
+    - name: Unpack pose
+      run: tar -xvf pose*.tar.gz
     - name: Build compose file for CI
-      run: ./pose config -t "${GITHUB_REF_SLUG}" --tag-filter regex=mrsarm/ --progress -o ci.yaml
+      run: ./pose --no-docker config --tag "${GITHUB_REF_SLUG}" --tag-filter regex=mrsarm/ --progress -o ci.yaml
     - name: Pull images
       run: docker compose -f ci.yaml pull
     - name: Run e2e tests
