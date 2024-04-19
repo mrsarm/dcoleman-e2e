@@ -4,8 +4,8 @@ on: [push]
 
 jobs:
 
-  build-release:
-    name: Build & Release
+  build-test-release:
+    name: Build, "e2e" Test & Release
 
     runs-on: ubuntu-latest
 
@@ -26,7 +26,7 @@ jobs:
       run: wget https://github.com/mrsarm/pose/releases/download/0.4.0-b4/pose-0.4.0-b4-x86_64-unknown-linux-gnu.tar.gz
     - run: tar -xvf pose*.tar.gz
     - name: Build compose file for CI
-      run: pose config -t "${GITHUB_REF_SLUG}" --tag-filter regex=mrsarm/ --progress -o ci.yaml
+      run: ./pose config -t "${GITHUB_REF_SLUG}" --tag-filter regex=mrsarm/ --progress -o ci.yaml
     - name: Pull images
       run: docker compose -f ci.yaml pull
     - name: Run e2e tests
