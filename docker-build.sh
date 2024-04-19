@@ -10,7 +10,7 @@ fi
 # Get the build
 if [ -n "$GITHUB_SHA" ] ; then
   GIT_HASH=${GITHUB_SHA}
-  GIT_BRANCH=${GITHUB_REF#refs/heads/}
+  GIT_BRANCH=${GITHUB_REF_NAME}
 else
   GIT_HASH=$(git rev-parse HEAD)
   GIT_BRANCH=$(git symbolic-ref --short HEAD)
