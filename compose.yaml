@@ -8,7 +8,7 @@ services:
   django-coleman:
     image: mrsarm/django-coleman
     build:
-      context: .
+      context: ../django-coleman
       args:
         - BUILD
     ports:
@@ -42,6 +42,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      django-coleman-provision:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "django-admin", "health_check"]
       interval: 1s
@@ -77,9 +79,22 @@ services:
     depends_on:
       - django-coleman
 
+  # Provide all the DB resources: DB and DB user creation, DB migrations and admin user creation
+  django-coleman-provision:
+    image: mrsarm/django-coleman
+    environment:
+      - PROCESS_TYPE=provision
+      - POSTGRES_PASSWORD
+      - DATABASE_URL
+      - ADMIN_USERNAME
+      - ADMIN_PASSWORD
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 
   #
-  # End-to-end tests
+  # End-to-end tests, not executed by default
   #
 
   dcoleman-e2e:
@@ -89,8 +104,6 @@ services:
         condition: service_healthy
       django-coleman-mtasks-viewer:
         condition: service_started
-      django-coleman-provision:
-        condition: service_completed_successfully
     profiles: ["e2e"]
 
   django-coleman-test:
@@ -111,21 +124,6 @@ services:
     depends_on:
       - postgres
     profiles: ["tools"]
-
-
-  # Provide all the DB resources: DB and DB user creation, DB migrations and admin user creation
-  django-coleman-provision:
-    image: mrsarm/django-coleman
-    environment:
-      - PROCESS_TYPE=provision
-      - POSTGRES_PASSWORD
-      - DATABASE_URL
-      - ADMIN_USERNAME
-      - ADMIN_PASSWORD
-    depends_on:
-      postgres:
-        condition: service_healthy
-    profiles: ["provision", "e2e"]
 
 
   # One by one provision tasks
