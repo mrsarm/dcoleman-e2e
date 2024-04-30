@@ -11,39 +11,49 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v4
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ vars.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Build the Docker image
-      run: ./docker-build.sh "${GITHUB_REF_SLUG}"
+
+    - name: Install pose
+      run: |
+        wget https://github.com/mrsarm/pose/releases/download/0.4.0/pose-0.4.0-x86_64-unknown-linux-gnu.tar.gz -O - \
+        | tar -xz
+
+    - name: Define $TAG variable
+      run: echo "TAG=$(./pose slug $GITHUB_REF_NAME)" >> "$GITHUB_ENV"
+    - name: Print tag and image names
+      run: echo -e "- TAG    -->  $TAG\n- IMAGE  -->  mrsarm/django-coleman-mtasks-viewer:$TAG"
+
     - name: Setup environment variables
       run: cp .env.example .env
-    - name: Download pose
-      if: ${{ github.ref != 'refs/heads/main' }}
-      run: wget https://github.com/mrsarm/pose/releases/download/0.4.0/pose-0.4.0-x86_64-unknown-linux-gnu.tar.gz
-    - name: Unpack pose
-      if: ${{ github.ref != 'refs/heads/main' }}
-      run: tar -xvf pose*.tar.gz
+
+    - name: Build the Docker image
+      run: ./docker-build.sh "$TAG"
+
     - name: Build compose file for CI with pose
       if: ${{ github.ref != 'refs/heads/main' }}
-      run: ./pose --no-docker config --tag "${GITHUB_REF_SLUG}" --tag-filter regex=mrsarm/ --progress -o ci.yaml
+      run: ./pose --no-docker config --tag "$TAG" --tag-filter regex=mrsarm/ --progress -o ci.yaml
     - name: Create compose file for CI without pose
       if: ${{ github.ref == 'refs/heads/main' }}
       run: cp compose.yaml ci.yaml
+
     - name: Pull images
       run: docker compose -f ci.yaml pull
+
     - name: Run e2e tests
       run: docker compose -f ci.yaml run dcoleman-e2e
+
     - name: Release Docker image
       if: ${{ github.ref != 'refs/heads/main' }}
-      run: docker push "mrsarm/dcoleman-e2e:${GITHUB_REF_SLUG}"
+      run: docker push "mrsarm/dcoleman-e2e:$TAG"
+
     - name: Tag "latest"
       if: ${{ github.ref == 'refs/heads/main' }}
-      run: docker tag "mrsarm/dcoleman-e2e:${GITHUB_REF_SLUG}" mrsarm/dcoleman-e2e:latest
+      run: docker tag "mrsarm/dcoleman-e2e:$TAG" mrsarm/dcoleman-e2e:latest
+
     - name: Release "latest"
       if: ${{ github.ref == 'refs/heads/main' }}
       run: docker push mrsarm/dcoleman-e2e:latest
