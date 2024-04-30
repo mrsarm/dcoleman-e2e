@@ -24,7 +24,7 @@ jobs:
       run: cp .env.example .env
     - name: Download pose
       if: ${{ github.ref != 'refs/heads/main' }}
-      run: wget https://github.com/mrsarm/pose/releases/download/0.4.0-b4/pose-0.4.0-b4-x86_64-unknown-linux-gnu.tar.gz
+      run: wget https://github.com/mrsarm/pose/releases/download/0.4.0/pose-0.4.0-x86_64-unknown-linux-gnu.tar.gz
     - name: Unpack pose
       if: ${{ github.ref != 'refs/heads/main' }}
       run: tar -xvf pose*.tar.gz
