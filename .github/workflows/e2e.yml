@@ -33,12 +33,11 @@ jobs:
     - name: Build the Docker image
       run: ./docker-build.sh "$TAG"
 
+    - name: Release Docker image
+      run: docker push "mrsarm/dcoleman-e2e:$TAG"
+
     - name: Build compose file for CI with pose
-      if: ${{ github.ref != 'refs/heads/main' }}
       run: ./pose --no-docker config --tag "$TAG" --tag-filter regex=mrsarm/ --progress -o ci.yaml
-    - name: Create compose file for CI without pose
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: cp compose.yaml ci.yaml
 
     - name: Pull images
       run: docker compose -f ci.yaml pull
@@ -46,14 +45,9 @@ jobs:
     - name: Run e2e tests
       run: docker compose -f ci.yaml run dcoleman-e2e
 
-    - name: Release Docker image
-      if: ${{ github.ref != 'refs/heads/main' }}
-      run: docker push "mrsarm/dcoleman-e2e:$TAG"
-
     - name: Tag "latest"
       if: ${{ github.ref == 'refs/heads/main' }}
       run: docker tag "mrsarm/dcoleman-e2e:$TAG" mrsarm/dcoleman-e2e:latest
-
     - name: Release "latest"
       if: ${{ github.ref == 'refs/heads/main' }}
       run: docker push mrsarm/dcoleman-e2e:latest
